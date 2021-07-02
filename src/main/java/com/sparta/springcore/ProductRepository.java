@@ -6,11 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductRepository {
+    private String dbId;
+    private String dbPassword;
+    private String dbUrl;
+
+    public ProductRepository(String dbId, String dbPassword, String dbUrl) {
+        this.dbId = dbId;
+        this.dbPassword = dbPassword;
+        this.dbUrl = dbUrl;
+    }
+
     public Product getProduct(Long id) throws SQLException {
         Product product = new Product();
 
         // DB 연결
-        Connection connection = DriverManager.getConnection("jdbc:h2:mem:springcoredb", "sa", "");
+        Connection connection = DriverManager.getConnection(dbUrl, this.dbId, this.dbPassword);
         // DB Query 작성
         PreparedStatement ps = connection.prepareStatement("select * from product where id = ?");
         ps.setLong(1, id);
@@ -35,7 +45,7 @@ public class ProductRepository {
     public List<Product> getProducts() throws SQLException {
         ArrayList<Product> products = new ArrayList<>();
         // DB 연결
-        Connection connection = DriverManager.getConnection("jdbc:h2:mem:springcoredb", "sa", "");
+        Connection connection = DriverManager.getConnection("jdbc:h2:mem:springcoredb", this.dbId, this.dbPassword);
         // DB Query 작성 및 실행
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("select * from product");
@@ -65,7 +75,7 @@ public class ProductRepository {
         product.setModifiedAt(now);
 
         // DB 연결
-        Connection connection = DriverManager.getConnection("jdbc:h2:mem:springcoredb", "sa", "");
+        Connection connection = DriverManager.getConnection("jdbc:h2:mem:springcoredb", this.dbId, this.dbPassword);
         // DB Query 작성
         PreparedStatement ps = connection.prepareStatement("select max(id) as id from product");
         ResultSet rs = ps.executeQuery();

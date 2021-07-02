@@ -6,8 +6,8 @@ import java.util.List;
 public class ProductService {
     final ProductRepository productRepository;
 
-    public ProductService() {
-        this.productRepository = new ProductRepository();
+    public ProductService(String dbId, String dbPassword, String dbUrl) {
+        this.productRepository = new ProductRepository(dbId, dbPassword, dbUrl);
     }
 
     public List<Product> getProducts() throws SQLException {

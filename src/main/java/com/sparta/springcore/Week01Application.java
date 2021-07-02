@@ -11,6 +11,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class Week01Application {
 
     public static void main(String[] args) {
+//        ProductService productService = new productService();
+//        ProductRepository productRepository = new ProductRepository();
+
         SpringApplication.run(Week01Application.class, args);
     }
 

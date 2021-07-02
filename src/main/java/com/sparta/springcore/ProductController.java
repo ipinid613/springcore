@@ -12,7 +12,11 @@ public class ProductController {
     final ProductService productService;
 
     public ProductController() {
-        this.productService = new ProductService();
+        String dbId = "sa";
+        String dbPassword = "";
+        String dbUrl = "jdbc:h2:mem:springcoredb";
+
+        this.productService = new ProductService(dbId, dbPassword, dbUrl);
     }
 
     // 등록된 전체 상품 목록 조회
