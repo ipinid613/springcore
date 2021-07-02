@@ -14,7 +14,7 @@ public class AllInOneController {
     @GetMapping("/api/products")
     public List<Product> getProducts() throws SQLException {
         ArrayList<Product> products = new ArrayList<>();
-        // DB 연결
+        // DB 연결 (몰라)
         Connection connection = DriverManager.getConnection("jdbc:h2:mem:springcoredb", "sa", "");
         // DB Query 작성 및 실행
         Statement stmt = connection.createStatement();
