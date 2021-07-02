@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 // Inversion of Control (IoC) 컨테이너
 // bean 이라고 부름
 @Component
-
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 }
