@@ -1,27 +1,23 @@
 package com.sparta.springcore;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
 
-@RequiredArgsConstructor // final로 선언된 멤버 변수를 자동으로 생성합니다.
+//@RequiredArgsConstructor // final로 선언된 멤버 변수를 자동으로 생성합니다.
 @RestController // JSON으로 데이터를 주고받음을 선언합니다.
 public class ProductController {
     final ProductService productService;
 
-    public ProductController() {
-        String dbId = "sa";
-        String dbPassword = "";
-        String dbUrl = "jdbc:h2:mem:springcoredb";
-
-        this.productService = new ProductService(dbId, dbPassword, dbUrl);
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     // 등록된 전체 상품 목록 조회
     @GetMapping("/api/products")
-    public List<Product> getProducts() throws SQLException {
+    public List<Product> getProducts()  {
         List<Product> products = this.productService.getProducts();
         // 응답 보내기
         return products;
@@ -29,7 +25,7 @@ public class ProductController {
 
     // 신규 상품 등록
     @PostMapping("/api/products")
-    public Product createProduct(@RequestBody ProductRequestDto requestDto) throws SQLException {
+    public Product createProduct(@RequestBody ProductRequestDto requestDto)  {
         Product product = this.productService.createProduct(requestDto);
         // 응답 보내기
         return product;
@@ -37,7 +33,7 @@ public class ProductController {
 
     // 설정 가격 변경
     @PutMapping("/api/products/{id}")
-    public Long updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto) throws SQLException {
+    public Long updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto)  {
         Product product = this.productService.updateProduct(id, requestDto);
         return product.getId();
     }
