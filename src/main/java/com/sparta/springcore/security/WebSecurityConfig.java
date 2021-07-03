@@ -45,6 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .logout() // 로그아웃 기능도 허용!
+                .logoutUrl("/user/logout")
+                //user/logout 요청이 오면 스프링 시큐리티가 알아서 로그아웃 처리 해줌!
                 .permitAll();
     }
 }

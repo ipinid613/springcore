@@ -14,9 +14,20 @@
     <script src="basic.js"></script>
     <title>나만의 셀렉샵</title>
 </head>
+
+<!--로그인된 사용자의 이름을 표시[th = 타임리프의 문법임)하고, 로그아웃 버튼 생성-->
 <body>
-<div class="header">
-    Select Shop
+<div class="header" style="position:relative;">
+    <div id="header-title-login-user">
+        <span th:text="${username}"></span> 님의
+    </div>
+    <div id="header-title-select-shop">
+        Select Shop
+    </div>
+
+    <a id="logout-text" href="/user/logout">
+        로그아웃
+    </a>
 </div>
 <div class="nav">
     <div class="nav-see active">
