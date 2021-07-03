@@ -28,6 +28,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly "com.fasterxml.jackson.core:jackson-databind:2.9.4"
     implementation 'org.json:json:20190722'
+    // 스프링 시큐리티
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Thymeleaf (뷰 템플릿 엔진) = 로그인 된 사용자의 이름을 표시하기 위해 추가!
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 test {
