@@ -15,22 +15,29 @@ import java.util.Optional;
 @Service
 //Repository의 기능을 사용해야 하기 때문에 repository bean 주입
 public class UserService {
+    //비밀번호 암호화 하는 passwordencoder 사용을 위해 씀.
+    private final PasswordEncoder passwordEncoder;
+
     private final UserRepository userRepository;
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
+    //DI 주입 부분
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        // passwordencoder도 사용할 것이기 때문에 di 주입 시킴!
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void registerUser(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
-        String password = requestDto.getPassword();
         // 회원 ID 중복 확인
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) { // findByUsername을 통해 찾은 값이 있다면(isPresent),
             throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
         }
+        // 패스워드 인코딩. encode라는 함수를 사용하면 그 결과로서 복호화된 패스워드 나옴.
+        String password = passwordEncoder.encode(requestDto.getPassword());
         //존재하지 않는다면 회원가입 계속 진행.
         String email = requestDto.getEmail();
         // 사용자 ROLE 확인. 기본값 : USER / ADMIN 아니고.

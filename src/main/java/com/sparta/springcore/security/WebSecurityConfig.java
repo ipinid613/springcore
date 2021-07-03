@@ -1,9 +1,11 @@
 package com.sparta.springcore.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 //스프링 시큐리티가 기본 로그인 포맷을 지원함!! 회원가입 페이지는 없음.
 // id = user
@@ -12,6 +14,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함. 위 두개 @은 필수.
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    //비밀번호 암호화 하기 위해서 Bean 이하 사용 17-21. 스프링 시큐리티에서 제공하는 클래스임!
+    @Bean
+    public BCryptPasswordEncoder encodePassword() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
