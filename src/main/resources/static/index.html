@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -14,9 +14,8 @@
     <script src="basic.js"></script>
     <title>나만의 셀렉샵</title>
 </head>
-
-<!--로그인된 사용자의 이름을 표시[th = 타임리프의 문법임)하고, 로그아웃 버튼 생성-->
 <body>
+<!--로그인 후에 username을 표시해주고, 로그아웃 버튼 추가하였음. ${username}은 타임리프 문법으로, homecontroller의 GET에 연결.-->
 <div class="header" style="position:relative;">
     <div id="header-title-login-user">
         <span th:text="${username}"></span> 님의
@@ -24,7 +23,6 @@
     <div id="header-title-select-shop">
         Select Shop
     </div>
-
     <a id="logout-text" href="/user/logout">
         로그아웃
     </a>
@@ -39,7 +37,6 @@
 </div>
 <div id="see-area">
     <div id="product-container">
-
     </div>
 </div>
 <div id="search-area">
@@ -48,7 +45,6 @@
         <!--    <img src="images/icon-search.png" alt="">-->
     </div>
     <div id="search-result-box">
-
     </div>
     <div id="container" class="popup-container">
         <div class="popup">
@@ -64,5 +60,8 @@
         </div>
     </div>
 </div>
+<div th:if="${admin}" id="admin" ></div>
+<!--admin이 있으면 이 div를 만들어주고, admin 페이지로 접근했다는 것을 파악함.-->
+<!--${admin}은 타임리프 문법으로, homecontroller의 /admin GET에 연결.-->-->
 </body>
 </html>
