@@ -45,4 +45,10 @@ public class UserController {
         userService.registerUser(requestDto);
         return "redirect:/";
     }
+
+    //인가받지 않은 사용자가 허용되지 않은 페이지 접근 시 아래를 리턴
+    @GetMapping("/user/forbidden")
+    public String forbidden() {
+        return "forbidden";
+    }
 }

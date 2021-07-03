@@ -1,6 +1,7 @@
 package com.sparta.springcore.controller;
 
 import com.sparta.springcore.security.UserDetailsImpl;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,8 @@ public class HomeController {
         return "index"; //index를 리턴할 때 username을 포함. 이는 index에서 타임리프로 ${username}하면 연결됨!
     }
 
+    //관리자만 /admin url을 사용할 수 있다고 지정해주는 것임.
+    @Secured("ROLE_ADMIN")
     @GetMapping("/admin")
     public String admin(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         model.addAttribute("username", userDetails.getUsername());
