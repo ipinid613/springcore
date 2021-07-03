@@ -51,4 +51,13 @@ public class UserController {
     public String forbidden() {
         return "forbidden";
     }
+
+    //카카오로부터 오는 콜백을 처리하는 부분
+    @GetMapping("/user/kakao/callback")
+    public String kakaoLogin(String code) {
+        // authorizedCode: 카카오 서버로부터 받은 인가 코드. == String code의 내용
+        userService.kakaoLogin(code);
+
+        return "redirect:/";
+    }
 }

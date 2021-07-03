@@ -12,12 +12,24 @@ import javax.persistence.*;
 @Entity // DB 테이블 역할을 합니다.
 public class User extends Timestamped {
 
+    //일반경로를 통한 회원가입
     public User(String username, String password, String email, UserRole role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.kakaoId = null;
     }
+
+    //카카오를 이용한 회원가입
+    public User(String username, String password, String email, UserRole role, Long kakaoId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.kakaoId = kakaoId;
+    }
+
     // ID가 자동으로 생성 및 증가합니다.
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -36,4 +48,7 @@ public class User extends Timestamped {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
+
+    @Column(nullable = true)
+    private Long kakaoId;
 }

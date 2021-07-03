@@ -4,7 +4,13 @@ import com.sparta.springcore.dto.SignupRequestDto;
 import com.sparta.springcore.model.User;
 import com.sparta.springcore.model.UserRole;
 import com.sparta.springcore.repository.UserRepository;
+import com.sparta.springcore.security.kakao.KakaoOAuth2;
+import com.sparta.springcore.security.kakao.KakaoUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +23,19 @@ import java.util.Optional;
 public class UserService {
     //비밀번호 암호화 하는 passwordencoder 사용을 위해 씀.
     private final PasswordEncoder passwordEncoder;
-
     private final UserRepository userRepository;
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
+    private final KakaoOAuth2 kakaoOAuth2;
+    private final AuthenticationManager authenticationManager;
 
     //DI 주입 부분
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, KakaoOAuth2 kakaoOAuth2, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         // passwordencoder도 사용할 것이기 때문에 di 주입 시킴!
         this.passwordEncoder = passwordEncoder;
+        this.kakaoOAuth2 = kakaoOAuth2;
+        this.authenticationManager = authenticationManager;
     }
 
     public void registerUser(SignupRequestDto requestDto) {
@@ -52,5 +61,40 @@ public class UserService {
 
         User user = new User(username, password, email, role);
         userRepository.save(user);
+    }
+
+    public void kakaoLogin(String authorizedCode) {
+        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
+        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
+        Long kakaoId = userInfo.getId();
+        String nickname = userInfo.getNickname();
+        String email = userInfo.getEmail();
+
+        // 우리 DB 에서 회원 Id 와 패스워드
+        // 회원 Id = 카카오 nickname
+        String username = nickname;
+        // 패스워드 = 카카오 Id + ADMIN TOKEN. 어드민 토큰은 무의미한 문자열임.
+        // 카카오 로그인 한 사용자가 카카오를 거치지 않고 일반 로그인 방식으로 접근하는 것을 방지하기 위해 어드민 토큰을 이어붙임!
+        String password = kakaoId + ADMIN_TOKEN;
+
+        // DB 에 중복된 Kakao Id 가 있는지 확인
+        User kakaoUser = userRepository.findByKakaoId(kakaoId)
+                .orElse(null);
+
+        // 카카오 정보로 회원가입
+        if (kakaoUser == null) {
+            // 패스워드 인코딩
+            String encodedPassword = passwordEncoder.encode(password);
+            // ROLE = 사용자
+            UserRole role = UserRole.USER;
+
+            kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
+            userRepository.save(kakaoUser);
+        }
+
+        // 로그인 처리
+        Authentication kakaoUsernamePassword = new UsernamePasswordAuthenticationToken(username, password);
+        Authentication authentication = authenticationManager.authenticate(kakaoUsernamePassword);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
