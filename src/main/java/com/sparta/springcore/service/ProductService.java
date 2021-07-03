@@ -20,8 +20,9 @@ public class ProductService {
         this.productRepository = re;
     }
 
-    public List<Product> getProducts() {
-        return this.productRepository.findAll();
+    //Controller의 GET /api/products와 연결 된 부분임. Controller에서 getProducts를 사용하고 있는데, userId를 포함하였기 때문에 여기서도 포함 처리.
+    public List<Product> getProducts(Long userId) {
+        return this.productRepository.findAllByUserId(userId); // productRepository에 findAllByUserId 추가해야 함.
     }
 
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
