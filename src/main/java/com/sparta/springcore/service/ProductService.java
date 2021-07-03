@@ -24,11 +24,11 @@ public class ProductService {
         return this.productRepository.findAll();
     }
 
-    @Transactional
-    public Product createProduct(ProductRequestDto requestDto)  {
-        // DTO DB
-        Product product = new Product(requestDto);
-        this.productRepository.save(product);
+    @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
+    public Product createProduct(ProductRequestDto requestDto, Long userId ) { //이제는 controller에서 userId도 보내주고 있기 때문에 userId 추가.
+        // 요청받은 DTO 로 DB에 저장할 객체 만들기
+        Product product = new Product(requestDto, userId); // medel-Product에 userId를 보내줌.
+        productRepository.save(product);
         return product;
     }
 
