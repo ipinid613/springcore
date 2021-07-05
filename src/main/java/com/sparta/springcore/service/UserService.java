@@ -4,6 +4,7 @@ import com.sparta.springcore.dto.SignupRequestDto;
 import com.sparta.springcore.model.User;
 import com.sparta.springcore.model.UserRole;
 import com.sparta.springcore.repository.UserRepository;
+import com.sparta.springcore.security.UserDetailsImpl;
 import com.sparta.springcore.security.kakao.KakaoOAuth2;
 import com.sparta.springcore.security.kakao.KakaoUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,31 +71,38 @@ public class UserService {
         String nickname = userInfo.getNickname();
         String email = userInfo.getEmail();
 
-        // 우리 DB 에서 회원 Id 와 패스워드
-        // 회원 Id = 카카오 nickname
-        String username = nickname;
-        // 패스워드 = 카카오 Id + ADMIN TOKEN. 어드민 토큰은 무의미한 문자열임.
-        // 카카오 로그인 한 사용자가 카카오를 거치지 않고 일반 로그인 방식으로 접근하는 것을 방지하기 위해 어드민 토큰을 이어붙임!
-        String password = kakaoId + ADMIN_TOKEN;
-
-        // DB 에 중복된 Kakao Id 가 있는지 확인
+        //DB에 중복된 kakao id가 있는지 확인
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
 
-        // 카카오 정보로 회원가입
         if (kakaoUser == null) {
-            // 패스워드 인코딩
-            String encodedPassword = passwordEncoder.encode(password);
-            // ROLE = 사용자
-            UserRole role = UserRole.USER;
-
-            kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
-            userRepository.save(kakaoUser);
+        // 카카오 회원 DB에서 카카오 회원 이메일과 동일한 이메일을 가진 회원이 있는지 확인
+            User sameEmailUser = userRepository.findByEmail(email).orElse(null);
+            if (sameEmailUser != null) { // 있다면
+                // kakaoUser
+                kakaoUser = sameEmailUser;
+                // 이메일로 찾아온 회원정보에다가 kakao 서버에서 받아온 kakaoId를 추가해주는 것.
+                kakaoUser.setKakaoId(kakaoId);
+                // kakaoId가 추가된 회원정보를 저장하는 것
+                userRepository.save(kakaoUser);
+            }
+            else { //처음 카카오를 통해 회원가입을 하는 경우
+                // 우리 DB 에서 회원 Id 와 패스워드
+                // 회원 Id = 카카오 nickname
+                String username = nickname;
+                // 패스워드 = 카카오 Id + ADMIN TOKEN. 어드민 토큰은 무의미한 문자열임.
+                // 카카오 로그인 한 사용자가 카카오를 거치지 않고 일반 로그인 방식으로 접근하는 것을 방지하기 위해 어드민 토큰을 이어붙임!
+                String password = kakaoId + ADMIN_TOKEN;
+                // 패스워드 인코딩
+                String encodedPassword = passwordEncoder.encode(password);
+                UserRole role = UserRole.USER;
+                kakaoUser = new User(username, encodedPassword, email, role, kakaoId);
+                userRepository.save(kakaoUser);
+            }
         }
-
         // 로그인 처리
-        Authentication kakaoUsernamePassword = new UsernamePasswordAuthenticationToken(username, password);
-        Authentication authentication = authenticationManager.authenticate(kakaoUsernamePassword);
+        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
