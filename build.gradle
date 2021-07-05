@@ -25,6 +25,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
+    // 테스트를 위한 코드. JUnit 사용하기 위해 필요
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly "com.fasterxml.jackson.core:jackson-databind:2.9.4"
     implementation 'org.json:json:20190722'
@@ -34,6 +35,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
+// 테스트를 위한 JUnit
 test {
     useJUnitPlatform()
 }

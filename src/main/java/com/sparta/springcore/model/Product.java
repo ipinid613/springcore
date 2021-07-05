@@ -37,7 +37,7 @@ public class Product extends Timestamped {
     @Column(nullable = false)
     private Long userId;
 
-    // 관심 상품 생성 시 이용합니다.
+    // 관심 상품 생성 시 이용합니다. 생성자임!
     public Product(ProductRequestDto requestDto, Long userId) {
         // 관심상품을 등록한 회원 Id 저장 - ProductService에서 받아온 Id임.
         this.userId = userId;
