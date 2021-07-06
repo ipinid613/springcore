@@ -22,11 +22,11 @@ public class MockProductRepository {
         return userProducts;
     }
 
+
     // 모든 상품 조회 (관리자용)
     public List<Product> findAll() {
         return products;
     }
-
     // 상품 저장
     public Product save(Product product) {
         product.setId(id); //상품 save 시 id가 DB에서 자동으로 1씩 높아지며 저장되는 것을 i++로 흉내냄.
